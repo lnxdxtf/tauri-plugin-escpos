@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-request-ble-permission"
+description = "Enables the request_ble_permission command without any pre-configured scope."
+commands.allow = ["request_ble_permission"]
+
+[[permission]]
+identifier = "deny-request-ble-permission"
+description = "Denies the request_ble_permission command without any pre-configured scope."
+commands.deny = ["request_ble_permission"]
