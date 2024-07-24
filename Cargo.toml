@@ -1,5 +1,5 @@
 [package]
-name = "    "
+name = "tauri-plugin-escpos"
 version = "0.0.0"
 authors = ["lnxdxtf"]
 description = ""

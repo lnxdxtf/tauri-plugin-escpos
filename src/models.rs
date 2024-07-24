@@ -66,6 +66,7 @@ pub enum PrinterType {
 
 #[derive(Default)]
 pub struct PrinterStore {
+    pub connection: Mutex<Option<String>>,
     pub adapter: Mutex<Option<eco_print::escpos::finder::ble::btleplug::platform::Adapter>>,
     pub printer: Mutex<Option<PrinterType>>,
 }

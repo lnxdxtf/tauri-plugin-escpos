@@ -4,6 +4,8 @@ Default permissions for the plugin
 
 - `allow-request-permissions`
 - `allow-permissions-ok`
+- `allow-start`
+- `allow-check-store-state`
 
 ### Permission Table 
 
@@ -13,6 +15,32 @@ Default permissions for the plugin
 <th>Description</th>
 </tr>
 
+
+<tr>
+<td>
+
+`escpos:allow-check-store-state`
+
+</td>
+<td>
+
+Enables the check_store_state command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-check-store-state`
+
+</td>
+<td>
+
+Denies the check_store_state command without any pre-configured scope.
+
+</td>
+</tr>
 
 <tr>
 <td>
@@ -114,6 +142,32 @@ Enables the request_permissions command without any pre-configured scope.
 <td>
 
 Denies the request_permissions command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-start`
+
+</td>
+<td>
+
+Enables the start command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-start`
+
+</td>
+<td>
+
+Denies the start command without any pre-configured scope.
 
 </td>
 </tr>

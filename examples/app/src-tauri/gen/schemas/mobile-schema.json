@@ -398,6 +398,13 @@
           ]
         },
         {
+          "description": "escpos:allow-check-store-state -> Enables the check_store_state command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-check-store-state"
+          ]
+        },
+        {
           "description": "escpos:allow-is-ble-enabled -> Enables the is_ble_enabled command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -426,6 +433,20 @@
           ]
         },
         {
+          "description": "escpos:allow-start -> Enables the start command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-start"
+          ]
+        },
+        {
+          "description": "escpos:deny-check-store-state -> Denies the check_store_state command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-check-store-state"
+          ]
+        },
+        {
           "description": "escpos:deny-is-ble-enabled -> Denies the is_ble_enabled command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -451,6 +472,13 @@
           "type": "string",
           "enum": [
             "escpos:deny-request-permissions"
+          ]
+        },
+        {
+          "description": "escpos:deny-start -> Denies the start command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-start"
           ]
         },
         {

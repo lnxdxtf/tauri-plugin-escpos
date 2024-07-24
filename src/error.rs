@@ -16,6 +16,10 @@ pub enum Error {
     InvalidPrinterType,
     #[error("Invalid printer state")]
     InvalidPrinterState,
+    /// Used when the adapter is not set
+    #[error("Adapter not set")]
+    AdapterNotSet,
+
     #[error("Adapter Bluetooth not found")]
     AdapterBluetoothNotFound,
     #[error("Bluetooth not enabled")]

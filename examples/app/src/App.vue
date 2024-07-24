@@ -1,27 +1,29 @@
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/core';
 
-
-
-async function status_permissions() {
+async function init() {
   let permissions_ok = await invoke('plugin:escpos|permissions_ok');
-  alert(`permissions ok: ${permissions_ok}`)
-}
-async function request_permissions() {
-  await invoke('plugin:escpos|request_permissions');
-}
-async function scan_devices_ble(): Promise<string[]> {
-  let devices:string[] = []
+  if (!permissions_ok) {
+    await invoke('plugin:escpos|request_permissions');
+  }
 
-  return devices
+}
+
+async function start(): Promise<void> {
+  await invoke('plugin:escpos|start', { conn: 'bluetooth' });
+}
+async function check_state(): Promise<void> {
+  let state = await invoke('plugin:escpos|check_store_state');
+  console.log(state)
 }
 
 </script>
 
 <template>
   <div class="container">
-    <button @click="status_permissions()">STATUS </button>
-    <button @click="request_permissions()">REQUEST</button>
-    <button @click="scan_devices_ble()">SCAN</button>
+    <button @click="init()">INIT </button>
+    <button @click="start()">START </button>
+    <button @click="check_state()">STATE </button>
+
   </div>
 </template>

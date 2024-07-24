@@ -38,6 +38,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
         .invoke_handler(tauri::generate_handler![
             commands::request_permissions,
             commands::permissions_ok,
+            commands::start,
+            commands::check_store_state
         ])
         .setup(|app, api| {
             #[cfg(mobile)]
