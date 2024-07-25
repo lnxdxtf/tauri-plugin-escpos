@@ -1,8 +1,6 @@
 use std::{collections::HashMap, time::Duration};
 
-use eco_print::escpos::{
-    finder::ble::FinderBLE, printers::printer_bluetooth::PrinterESCPOSBluetooth,
-};
+use eco_print::escpos::finder::ble::FinderBLE;
 use tauri::{AppHandle, Manager, Runtime, State};
 
 use crate::{Error, Escpos, PermissionState, PrinterStore, Result};
@@ -12,7 +10,7 @@ pub(crate) fn request_permissions<R: Runtime>(
     _app: AppHandle<R>,
     escpos: State<'_, Escpos<R>>,
 ) -> Result<()> {
-    escpos.request_permissions();
+    let _ = escpos.request_permissions();
     Ok(())
 }
 
@@ -39,7 +37,7 @@ pub(crate) async fn permissions_ok<R: Runtime>(
 #[tauri::command]
 pub(crate) async fn start<R: Runtime>(
     _app: AppHandle<R>,
-    escpos: State<'_, Escpos<R>>,
+    _escpos: State<'_, Escpos<R>>,
     conn: String,
 ) -> Result<()> {
     let printer_store = _app.state::<PrinterStore>().inner();
@@ -74,13 +72,13 @@ pub(crate) async fn start<R: Runtime>(
 #[tauri::command]
 pub(crate) async fn check_store_state<R: Runtime>(
     _app: AppHandle<R>,
-    escpos: State<'_, Escpos<R>>,
+    _escpos: State<'_, Escpos<R>>,
 ) -> Result<HashMap<String, bool>> {
     let mut seted = HashMap::new();
     let printer_store = _app.state::<PrinterStore>().inner();
     match printer_store.adapter.lock() {
-        Ok(adapterOpt) => {
-            if let Some(_) = &*adapterOpt {
+        Ok(adapter_opt) => {
+            if let Some(_) = &*adapter_opt {
                 seted.insert("adapter".to_string(), true);
             } else {
                 seted.insert("adapter".to_string(), false);
@@ -89,8 +87,8 @@ pub(crate) async fn check_store_state<R: Runtime>(
         Err(_) => return Err(Error::InvalidPrinterState),
     }
     match printer_store.connection.lock() {
-        Ok(connOpt) => {
-            if let Some(conn) = &*connOpt {
+        Ok(conn_opt) => {
+            if let Some(conn) = &*conn_opt {
                 seted.insert(format!("connection {}", conn), true);
             } else {
                 seted.insert(format!("connection"), false);
@@ -99,8 +97,8 @@ pub(crate) async fn check_store_state<R: Runtime>(
         Err(_) => return Err(Error::InvalidPrinterState),
     }
     match printer_store.printer.lock() {
-        Ok(printerOpt) => {
-            if let Some(_) = &*printerOpt {
+        Ok(printer_opt) => {
+            if let Some(_) = &*printer_opt {
                 seted.insert("printer".to_string(), true);
             } else {
                 seted.insert("printer".to_string(), false);
