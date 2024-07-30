@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { invoke } from '@tauri-apps/api/core';
 
+let data: any = null
+
 async function init() {
   let permissions_ok = await invoke('plugin:escpos|permissions_ok');
   if (!permissions_ok) {
@@ -14,7 +16,9 @@ async function start(): Promise<void> {
 }
 async function check_state(): Promise<void> {
   let state = await invoke('plugin:escpos|check_store_state');
-  console.log(state)
+  console.log(state);
+
+  data = state;
 }
 
 </script>
@@ -24,6 +28,10 @@ async function check_state(): Promise<void> {
     <button @click="init()">INIT </button>
     <button @click="start()">START </button>
     <button @click="check_state()">STATE </button>
+
+    <div v-if="data">
+      <p>{{ data }}</p>
+    </div>
 
   </div>
 </template>

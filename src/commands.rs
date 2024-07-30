@@ -20,14 +20,9 @@ pub(crate) async fn permissions_ok<R: Runtime>(
     escpos: State<'_, Escpos<R>>,
 ) -> Result<bool> {
     let state = escpos.permissions_state()?;
-    if state.bluetooth == PermissionState::Granted
+    Ok(state.bluetooth == PermissionState::Granted
         && state.bluetooth_scan == PermissionState::Granted
-        && state.bluetooth_connect == PermissionState::Granted
-    {
-        Ok(true)
-    } else {
-        Ok(false)
-    }
+        && state.bluetooth_connect == PermissionState::Granted)
 }
 
 /// After getting the permissions, we can start the adapter

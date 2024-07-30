@@ -17,4 +17,6 @@ import app.tauri.plugin.Invoke
         Permission(strings = [Manifest.permission.BLUETOOTH_CONNECT], alias = "bluetoothConnect")
     ]
 )
-class EscposPlugin(private val activity: Activity): Plugin(activity) {}
+class EscposPlugin(private val activity: Activity): Plugin(activity) {
+    
+}

@@ -1,0 +1,7 @@
+[submodule "android/jni-utils-rs"]
+	path = android/jni-utils-rs
+	url = https://github.com/deviceplug/jni-utils-rs.git
+	
+[submodule "android/btleplug"]
+	path = android/btleplug
+	url = https://github.com/deviceplug/btleplug.git

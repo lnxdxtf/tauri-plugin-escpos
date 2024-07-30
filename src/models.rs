@@ -61,6 +61,7 @@ impl<'de> Deserialize<'de> for PermissionState {
 
 pub enum PrinterType {
     BLE(eco_print::escpos::printers::printer_bluetooth::PrinterESCPOSBluetooth),
+    #[cfg(desktop)]
     USB(eco_print::escpos::printers::printer_usb::PrinterESCPOSUSB),
 }
 
