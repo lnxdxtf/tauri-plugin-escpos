@@ -18,7 +18,7 @@ tauri-build = { version = "2.0.0-beta", features = [] }
 tauri = { version = "2.0.0-beta", features = [] }
 tauri-plugin-shell = "2.0.0-beta"
 serde_json = "1.0"
-tauri-plugin-escpos = { path = "../../../" }
+tauri-plugin-escpos = { path = "../../../", features = ["debug"] }
 
 
 [features]

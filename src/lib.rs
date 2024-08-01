@@ -12,6 +12,14 @@ mod desktop;
 #[cfg(mobile)]
 mod mobile;
 
+// Debug Feature
+#[cfg(feature = "debug")]
+#[macro_use] extern crate log;
+#[cfg(feature = "debug")]
+extern crate android_logger;
+#[cfg(feature = "debug")]
+mod debug;
+
 mod commands;
 mod error;
 mod models;
@@ -34,6 +42,9 @@ impl<R: Runtime, T: Manager<R>> crate::EscposExt<R> for T {
 
 /// Initializes the plugin.
 pub fn init<R: Runtime>() -> TauriPlugin<R> {
+    #[cfg(feature = "debug")]
+    debug::debug_init();
+
     Builder::new("escpos")
         .invoke_handler(tauri::generate_handler![
             commands::request_permissions,

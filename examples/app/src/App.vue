@@ -30,7 +30,8 @@ async function check_state(): Promise<void> {
     <button @click="check_state()">STATE </button>
 
     <div v-if="data">
-      <p>{{ data }}</p>
+      <p>{{ data.adapter }}</p>
+      <p>{{ data.printer }}</p>
     </div>
 
   </div>

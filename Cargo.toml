@@ -19,11 +19,19 @@ eco_print = { path = "X:/dev/projects/eco_print", features = [
     "usb",
 ] }
 
+log = { version = "0.4.22", optional = true }
+
 [target.'cfg(target_os = "android")'.dependencies]
 jni = "0.19.0"
 once_cell = "1.19.0"
 jni-utils = "0.1.1"
+android_logger = { version = "0.14.1", optional = true }
 
 
 [build-dependencies]
 tauri-plugin = { version = "2.0.0-beta.17", features = ["build"] }
+
+
+[features]
+default = []
+debug = ["log", "android_logger"]
