@@ -19,6 +19,7 @@ impl<R: Runtime> Escpos<R> {
             bluetooth: PermissionState::Granted,
             bluetooth_scan: PermissionState::Granted,
             bluetooth_connect: PermissionState::Granted,
+            bluetooth_admin: PermissionState::Granted,
         })
     }
 
@@ -27,6 +28,7 @@ impl<R: Runtime> Escpos<R> {
             bluetooth: PermissionState::Granted,
             bluetooth_scan: PermissionState::Granted,
             bluetooth_connect: PermissionState::Granted,
+            bluetooth_admin: PermissionState::Granted,
         })
     }
 }

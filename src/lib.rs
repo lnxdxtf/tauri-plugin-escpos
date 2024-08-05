@@ -14,11 +14,17 @@ mod mobile;
 
 // Debug Feature
 #[cfg(feature = "debug")]
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 #[cfg(feature = "debug")]
 extern crate android_logger;
 #[cfg(feature = "debug")]
 mod debug;
+
+
+#[cfg(mobile)]
+#[cfg(target_os = "android")]
+mod java;
 
 mod commands;
 mod error;
@@ -57,11 +63,21 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             let escpos = mobile::init(app, api)?;
             #[cfg(desktop)]
             let escpos = desktop::init(app, api)?;
+
             app.manage(escpos);
             // manage state so it is accessible by the commands
             app.manage(PrinterStore::default());
             // To get the printer store state, you can use the following code:
             // let printer_store = app.state::<PrinterStore>();
+
+            #[cfg(feature = "debug")]
+            {
+                #[cfg(mobile)]
+                log::debug!("escpos mobile plugin initialized");
+                #[cfg(desktop)]
+                log::debug!("escpos desktop plugin initialized");
+            }
+
             Ok(())
         })
         .build()

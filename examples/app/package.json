@@ -12,8 +12,7 @@
   "dependencies": {
     "vue": "^3.3.4",
     "@tauri-apps/api": "^2.0.0-beta.0",
-    "@tauri-apps/plugin-shell": "^2.0.0-beta.0",
-    "tauri-plugin-escpos-api": "link:../../"
+    "@tauri-apps/plugin-shell": "^2.0.0-beta.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.2.3",

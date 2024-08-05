@@ -35,6 +35,7 @@ impl<R: Runtime> Escpos<R> {
                 bluetooth: true,
                 bluetooth_scan: true,
                 bluetooth_connect: true,
+                bluetooth_admin: true,
             },
         );
 
@@ -46,42 +47,5 @@ impl<R: Runtime> Escpos<R> {
             .run_mobile_plugin::<PermissionResponse>("checkPermissions", ())
             .map(|r| r)
             .map_err(Into::into)
-    }
-}
-
-// For JAVA - JNI INIT Android
-#[cfg(target_os = "android")]
-pub mod android {
-    use jni::objects::GlobalRef;
-    use jni::{JNIEnv, JavaVM};
-    use once_cell::sync::OnceCell;
-
-    pub static JAVAVM: OnceCell<JavaVM> = OnceCell::new();
-
-    #[no_mangle]
-    pub extern "C" fn JNI_OnLoad(
-        vm: jni::JavaVM,
-        _res: *const std::os::raw::c_void,
-    ) -> jni::sys::jint {
-        log::info!("JNI_OnLoad init");
-
-        let env = vm.get_env().unwrap();
-
-        if let Err(err) = jni_utils::init(&env) {
-            log::error!("Error initializing JNI utils: {:?}", err);
-            return jni::sys::JNI_ERR;
-        }
-
-        if let Err(err) = eco_print::escpos::btleplug::platform::init(&env) {
-            log::error!("Error initializing eco_print | btleplug-android : {:?}", err);
-            return jni::sys::JNI_ERR;
-        }
-
-        if let Err(err) = JAVAVM.set(vm) {
-            log::error!("Error setting JavaVM");
-            return jni::sys::JNI_ERR;
-        }
-
-        jni::JNIVersion::V6.into()
     }
 }

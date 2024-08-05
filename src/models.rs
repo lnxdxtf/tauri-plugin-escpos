@@ -8,6 +8,7 @@ pub struct PermissionResponse {
     pub bluetooth: PermissionState,
     pub bluetooth_scan: PermissionState,
     pub bluetooth_connect: PermissionState,
+    pub bluetooth_admin: PermissionState,
 }
 
 #[derive(Serialize, Debug, Clone, Copy, PartialEq, Eq)]
@@ -16,6 +17,7 @@ pub struct RequestPermissions {
     pub bluetooth: bool,
     pub bluetooth_scan: bool,
     pub bluetooth_connect: bool,
+    pub bluetooth_admin: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -60,7 +62,7 @@ impl<'de> Deserialize<'de> for PermissionState {
 }
 
 pub enum PrinterType {
-    BLE(eco_print::escpos::printers::printer_bluetooth::PrinterESCPOSBluetooth),
+    BLE(eco_print::escpos::printers::printer_ble::PrinterESCPOSBLE),
     #[cfg(desktop)]
     USB(eco_print::escpos::printers::printer_usb::PrinterESCPOSUSB),
 }
