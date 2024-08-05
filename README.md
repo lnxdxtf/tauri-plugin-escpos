@@ -9,7 +9,7 @@ NOTE: FOR WHILE, JUST SUPPORTS BLE
 
 ---
 
-## Android + btleplug(droidplug)
+## Android + btleplug(droidplug) | Explanation 
 
 1. **Copy the necessary Java files**:  
    Copy the **nonpolynomial**(btleplug\src\droidplug\java\src\main\java\com\nonpolynomial) directory from the repository to your Android project's `android/src/main/java/com/` directory.
