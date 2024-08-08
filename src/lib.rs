@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::sync::Arc;
 
 use tauri::{
     plugin::{Builder, TauriPlugin},
@@ -16,11 +16,13 @@ mod mobile;
 #[cfg(feature = "debug")]
 #[macro_use]
 extern crate log;
+#[cfg(target_os = "android")]
 #[cfg(feature = "debug")]
 extern crate android_logger;
 #[cfg(feature = "debug")]
 mod debug;
 
+mod permission;
 
 #[cfg(mobile)]
 #[cfg(target_os = "android")]
@@ -34,6 +36,7 @@ use desktop::Escpos;
 pub use error::{Error, Result};
 #[cfg(mobile)]
 use mobile::Escpos;
+use tokio::sync::Mutex;
 
 /// Extensions to [`tauri::App`], [`tauri::AppHandle`] and [`tauri::Window`] to access the escpos APIs.
 pub trait EscposExt<R: Runtime> {
@@ -56,7 +59,10 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::request_permissions,
             commands::permissions_ok,
             commands::start,
-            commands::check_store_state
+            commands::check_store_state,
+            commands::start_scan,
+            commands::connect,
+            commands::disconnect
         ])
         .setup(|app, api| {
             #[cfg(mobile)]
@@ -66,7 +72,7 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
 
             app.manage(escpos);
             // manage state so it is accessible by the commands
-            app.manage(PrinterStore::default());
+            app.manage(Arc::new(Mutex::new(PrinterStore::default())));
             // To get the printer store state, you can use the following code:
             // let printer_store = app.state::<PrinterStore>();
 

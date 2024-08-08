@@ -309,6 +309,48 @@
           ]
         },
         {
+          "description": "allow-connect -> Enables the connect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-connect"
+          ]
+        },
+        {
+          "description": "deny-connect -> Denies the connect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-connect"
+          ]
+        },
+        {
+          "description": "allow-disconect -> Enables the disconect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-disconect"
+          ]
+        },
+        {
+          "description": "deny-disconect -> Denies the disconect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-disconect"
+          ]
+        },
+        {
+          "description": "allow-disconnect -> Enables the disconnect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-disconnect"
+          ]
+        },
+        {
+          "description": "deny-disconnect -> Denies the disconnect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-disconnect"
+          ]
+        },
+        {
           "description": "allow-is-ble-enabled -> Enables the is_ble_enabled command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -376,6 +418,20 @@
           "type": "string",
           "enum": [
             "deny-start"
+          ]
+        },
+        {
+          "description": "allow-start-scan -> Enables the start_scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-start-scan"
+          ]
+        },
+        {
+          "description": "deny-start-scan -> Denies the start_scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-start-scan"
           ]
         },
         {

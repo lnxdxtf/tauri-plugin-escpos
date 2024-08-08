@@ -10,3 +10,8 @@ pub fn debug_init() {
     );
     log::info!("Android logger initialized");
 }
+
+#[cfg(desktop)]
+pub fn debug_init() {
+    log::info!("Logger initialized");
+}

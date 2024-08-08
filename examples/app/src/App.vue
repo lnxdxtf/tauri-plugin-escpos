@@ -1,11 +1,18 @@
 <template>
-  <div class="container">
-    <button @click="init()">INIT </button>
-    <button @click="start()">START </button>
-    <button @click="check_state()">STATE </button>
+  <div>
+    <div class="container">
+      <button @click="init()">INIT </button>
+      <button @click="start()">START </button>
+      <button @click="check_state()">STATE </button>
+      <button @click="scan()">SCAN </button>
+    </div>
 
-    <div v-if="state">
-      <p>{{ state }}</p>
+      <div v-if="state">
+        <p>{{ state }}</p>
+      </div>
+
+    <div v-if="devices.length > 0">
+      {{ devices }}
     </div>
 
   </div>
@@ -14,11 +21,12 @@
 <script lang="ts">
 import { invoke } from '@tauri-apps/api/core';
 export default {
-  
+
 
   data() {
     return {
       state: {},
+      devices: [],
     }
   },
 
@@ -40,6 +48,13 @@ export default {
       console.log(state);
 
       this.state = state;
+    },
+
+    async scan(): Promise<void> {
+      let d = await invoke('plugin:escpos|start_scan');
+      console.log(d)
+      this.devices = d as any
+
     }
   }
 }

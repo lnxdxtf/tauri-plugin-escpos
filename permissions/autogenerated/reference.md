@@ -6,6 +6,9 @@ Default permissions for the plugin
 - `allow-permissions-ok`
 - `allow-start`
 - `allow-check-store-state`
+- `allow-start-scan`
+- `allow-connect`
+- `allow-disconnect`
 
 ### Permission Table 
 
@@ -38,6 +41,84 @@ Enables the check_store_state command without any pre-configured scope.
 <td>
 
 Denies the check_store_state command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-connect`
+
+</td>
+<td>
+
+Enables the connect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-connect`
+
+</td>
+<td>
+
+Denies the connect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-disconect`
+
+</td>
+<td>
+
+Enables the disconect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-disconect`
+
+</td>
+<td>
+
+Denies the disconect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-disconnect`
+
+</td>
+<td>
+
+Enables the disconnect command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-disconnect`
+
+</td>
+<td>
+
+Denies the disconnect command without any pre-configured scope.
 
 </td>
 </tr>
@@ -168,6 +249,32 @@ Enables the start command without any pre-configured scope.
 <td>
 
 Denies the start command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-start-scan`
+
+</td>
+<td>
+
+Enables the start_scan command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-start-scan`
+
+</td>
+<td>
+
+Denies the start_scan command without any pre-configured scope.
 
 </td>
 </tr>

@@ -27,6 +27,9 @@ pub enum Error {
 
     #[error("Error getting devices ble")]
     ErrorGetDevicesBle,
+
+    #[error("Error scan devices ble")]
+    ScanError,
 }
 
 impl Serialize for Error {
@@ -37,3 +40,6 @@ impl Serialize for Error {
         serializer.serialize_str(self.to_string().as_ref())
     }
 }
+
+unsafe impl Send for Error {}
+unsafe impl Sync for Error {}

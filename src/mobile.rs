@@ -4,7 +4,8 @@ use tauri::{
     AppHandle, Runtime,
 };
 
-use crate::models::*;
+use crate::java;
+use crate::permission::*;
 
 #[cfg(target_os = "android")]
 const PLUGIN_IDENTIFIER: &str = "com.plugin.escpos";
@@ -47,5 +48,14 @@ impl<R: Runtime> Escpos<R> {
             .run_mobile_plugin::<PermissionResponse>("checkPermissions", ())
             .map(|r| r)
             .map_err(Into::into)
+    }
+
+    pub fn btleplug_context_spawn<F>(&self, future: F) -> tokio::task::JoinHandle<F::Output>
+    where
+        F: std::future::Future + Send + 'static,
+        F::Output: Send + 'static,
+    {
+        let runtime = java::utils::RUNTIME.get().expect("Runtime not initialized");
+        runtime.spawn(future)
     }
 }

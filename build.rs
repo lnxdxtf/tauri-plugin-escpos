@@ -3,6 +3,9 @@ const COMMANDS: &[&str] = &[
     "permissions_ok",
     "start",
     "check_store_state",
+    "start_scan",
+    "connect",
+    "disconnect",
 ];
 
 fn main() {
