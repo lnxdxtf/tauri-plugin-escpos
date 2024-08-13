@@ -3,8 +3,6 @@ use tauri::{
     plugin::{PluginApi, PluginHandle},
     AppHandle, Runtime,
 };
-
-use crate::java;
 use crate::permission::*;
 
 #[cfg(target_os = "android")]
@@ -30,7 +28,7 @@ pub struct Escpos<R: Runtime>(PluginHandle<R>);
 
 impl<R: Runtime> Escpos<R> {
     pub fn request_permissions(&self) -> crate::Result<()> {
-        self.0.run_mobile_plugin::<PermissionResponse>(
+       let _= self.0.run_mobile_plugin::<PermissionResponse>(
             "requestPermissions",
             RequestPermissions {
                 bluetooth: true,
@@ -50,12 +48,17 @@ impl<R: Runtime> Escpos<R> {
             .map_err(Into::into)
     }
 
+    #[cfg(target_os = "android")]
+    /// Used to spawn context for btleplug. To use btleplug on android, we need to spawn the context
+    /// Write your async function and pass it to this function to spawn the context.
     pub fn btleplug_context_spawn<F>(&self, future: F) -> tokio::task::JoinHandle<F::Output>
     where
         F: std::future::Future + Send + 'static,
         F::Output: Send + 'static,
     {
-        let runtime = java::utils::RUNTIME.get().expect("Runtime not initialized");
+        let runtime = crate::java::utils::RUNTIME
+            .get()
+            .expect("Runtime JAVA BTLEPLUG not initialized");
         runtime.spawn(future)
     }
 }

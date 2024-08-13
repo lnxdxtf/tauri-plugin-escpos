@@ -1,33 +1,46 @@
-use std::{collections::HashMap, str::FromStr, sync::Arc, time::Duration, vec};
+#![allow(unused)]
 
 use eco_print::escpos::{
     btleplug::api::Peripheral,
     finder::{ble::FinderBLE, uuid::Uuid},
-    printers::printer_ble::THERMAL_PRINTER_SERVICE,
+    printers::printer_ble::{PrinterESCPOSBLE, THERMAL_PRINTER_SERVICE},
 };
+use std::{sync::Arc, time::Duration};
 use tauri::{AppHandle, Manager, Runtime, State};
 use tokio::sync::Mutex;
 
-use crate::{permission::PermissionState, Error, Escpos, EscposExt, PrinterStore, Result};
+use crate::{
+    permission::{PermissionResponse, PermissionState},
+    ConnectionType, Device, Error, Escpos, EscposExt, Printer, PrinterStore, Result,
+};
 
 #[tauri::command]
 pub(crate) fn request_permissions<R: Runtime>(
     _app: AppHandle<R>,
     escpos: State<'_, Escpos<R>>,
 ) -> Result<()> {
-    let _ = escpos.request_permissions();
+    let state = escpos.permissions_state()?;
+    if state.bluetooth != PermissionState::Granted
+        || state.bluetooth_scan != PermissionState::Granted
+        || state.bluetooth_connect != PermissionState::Granted
+        || state.bluetooth_admin != PermissionState::Granted
+    {
+        info!(
+            "Requesting Permissions. Permissions not Granted: {:?}",
+            state
+        );
+        let _ = escpos.request_permissions();
+    }
     Ok(())
 }
 
 #[tauri::command]
-pub(crate) async fn permissions_ok<R: Runtime>(
+pub(crate) fn permissions_status<R: Runtime>(
     _app: AppHandle<R>,
     escpos: State<'_, Escpos<R>>,
-) -> Result<bool> {
+) -> Result<PermissionResponse> {
     let state = escpos.permissions_state()?;
-    Ok(state.bluetooth == PermissionState::Granted
-        && state.bluetooth_scan == PermissionState::Granted
-        && state.bluetooth_connect == PermissionState::Granted)
+    Ok(state)
 }
 
 /// After getting the permissions, we can start the adapter
@@ -38,134 +51,206 @@ pub(crate) async fn permissions_ok<R: Runtime>(
 pub(crate) async fn start<R: Runtime>(
     _app: AppHandle<R>,
     _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
-    conn: String,
+    conn: ConnectionType,
 ) -> Result<()> {
-    if conn == "bluetooth" {
-        #[cfg(target_os = "android")]
-        {
-            let mut printer_store_clone = Arc::clone(&_printer_store);
-            _app.escpos().btleplug_context_spawn(async move {
-                let mut printer_store = printer_store_clone.lock().await;
+    let mut printer_store = _printer_store.lock().await;
 
-                let adapter = FinderBLE::get_adapter()
-                    .await
-                    .map_err(|_| Error::AdapterBluetoothNotFound)
-                    .unwrap();
-                printer_store.connection = Some(conn);
-                printer_store.adapter = Some(adapter);
-            })
+    match conn {
+        ConnectionType::BLE => {
+            #[cfg(feature = "ble")]
+            {
+                #[cfg(target_os = "android")]
+                {}
+            }
+            #[cfg(not(feature = "ble"))]
+            {
+                return Err(Error::BLEFeatureNotEnabled);
+            }
         }
-        #[cfg(not(target_os = "android"))]
-        {
-            let adapter = FinderBLE::get_adapter()
-                .await
-                .map_err(|_| Error::AdapterBluetoothNotFound)?;
-            let mut printer_store = _printer_store.lock().await;
-            printer_store.connection = Some(conn);
-            printer_store.adapter = Some(adapter);
+        ConnectionType::USB => {
+            #[cfg(feature = "usb")]
+            {}
+            #[cfg(not(feature = "usb"))]
+            {
+                return Err(Error::USBFeatureNotEnabled);
+            }
         }
-    } else if conn == "usb" {
-        todo!("usb is not implemented yet");
-    } else {
-        return Err(Error::InvalidConnectionType);
-    };
+    }
 
+    printer_store.connection = conn;
     Ok(())
 }
 
 #[tauri::command]
 pub(crate) async fn check_store_state(
     _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
-) -> Result<HashMap<String, bool>> {
-    let mut printer_store_arc: Arc<Mutex<PrinterStore>> = Arc::clone(&_printer_store);
-    let mut printer_store = printer_store_arc.lock().await;
-
-    let mut seted = HashMap::new();
-
-    if let Some(_) = printer_store.adapter {
-        seted.insert("adapter".to_string(), true);
-    } else {
-        seted.insert("adapter".to_string(), false);
-    }
-
-    if let Some(conn) = &printer_store.connection {
-        seted.insert(format!("connection {}", conn), true);
-    } else {
-        seted.insert(format!("connection"), false);
-    }
-
-    if let Some(_) = printer_store.printer {
-        seted.insert("printer".to_string(), true);
-    } else {
-        seted.insert("printer".to_string(), false);
-    }
-
-    Ok(seted)
+) -> Result<PrinterStore> {
+    let mut printer_store = _printer_store.lock().await;
+    // The adapter, devices_ble, devices_usb and printer are not serialized, so we need to remove them.
+    Ok(PrinterStore {
+        connection: printer_store.connection,
+        connected: printer_store.connected,
+        devices_ble: printer_store.devices_ble.clone(),
+        devices_usb: printer_store.devices_usb.clone(),
+        ..Default::default()
+    })
 }
 
 #[tauri::command]
 pub(crate) async fn start_scan<R: Runtime>(
     _app: AppHandle<R>,
     _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
-) -> Result<Vec<String>> {
-    let mut devices_data: Arc<Mutex<Vec<String>>> = Arc::new(Mutex::new(vec![]));
-    #[cfg(target_os = "android")]
-    {
-        let printer_store_clone = Arc::clone(&_printer_store);
-        let device_data_clone: Arc<Mutex<Vec<String>>> = Arc::clone(&devices_data);
-        _app.escpos()
-            .btleplug_context_spawn(async move {
-                let time = Duration::from_secs(5 as u64);
-                let mut printer_store = printer_store_clone.lock().await;
-                if let Some(adapter) = &printer_store.adapter {
-                    let services_filter = vec![];
-                    match FinderBLE::scan(adapter, services_filter, time)
-                        .await
-                        .map_err(|_| Error::ScanError)
-                    {
-                        Ok(dvc) => {
-                            log::info!("Devices found: {:?}", dvc);
-                            let mut devices = device_data_clone.lock().await;
-                            // devices = dvc.into_iter().map(|d| d.id().to_string()).collect();
-                            for d in dvc {
-                                devices.push(d.address().to_string());
-                            }
-                        }
-                        Err(e) => {
-                            log::info!("Error scanning devices: {:?}", e);
-                        }
-                    };
-                }
-            })
-            .await
-            .expect("Error btleplug ctx");
-    }
+    time: u32,
+) -> Result<()> {
+    let printer_store = Arc::clone(&_printer_store);
+    let conn = printer_store.lock().await.connection;
 
-    let data = devices_data.lock().await;
-    Ok(data.clone())
+    // Clear the devices list
+    printer_store.lock().await.devices_ble.clear();
+    printer_store.lock().await.devices_usb.clear();
+
+    match conn {
+        ConnectionType::BLE => {
+            #[cfg(feature = "ble")]
+            {
+                #[cfg(target_os = "android")]
+                {
+                    _app.escpos()
+                        .btleplug_context_spawn(async move {
+                            let mut printer_store_android = printer_store.lock().await;
+                            let adapter = FinderBLE::get_adapter()
+                                .await
+                                .map_err(|_| Error::BLEAdapterNotFound)?;
+                            let scanned_devices =
+                                FinderBLE::scan(&adapter, vec![], Duration::from_secs(time as u64))
+                                    .await
+                                    .map_err(|_| Error::BLEScan)?;
+                            for device in scanned_devices {
+                                info!("getting prop from Device: {:?}", device);
+                                if let Some(prop) = device.properties().await.unwrap() {
+                                    printer_store_android.devices_ble.push(Device {
+                                        name: prop.local_name.unwrap_or("Unknown".to_string()),
+                                        address: device.address().to_string(),
+                                        conn: ConnectionType::BLE,
+                                        services_ble: prop
+                                            .services
+                                            .iter()
+                                            .map(|s| s.to_string())
+                                            .collect(),
+                                    })
+                                }
+                            }
+                            Ok::<(), Error>(())
+                        })
+                        .await
+                        .map_err(|_err| Error::BLEbtleplugContextSpawn(_err.to_string()))?;
+                }
+            }
+            #[cfg(not(feature = "ble"))]
+            {
+                return Err(Error::BLEFeatureNotEnabled);
+            }
+        }
+        ConnectionType::USB => {
+            #[cfg(feature = "usb")]
+            {
+                todo!()
+            }
+            #[cfg(not(feature = "usb"))]
+            {
+                return Err(Error::USBFeatureNotEnabled);
+            }
+        }
+    }
+    Ok(())
 }
 
 #[tauri::command]
 pub(crate) async fn connect<R: Runtime>(
     _app: AppHandle<R>,
-    escpos: State<'_, Escpos<R>>,
+    _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
+    time: u64,
+    device: Device,
 ) -> Result<()> {
-    todo!()
+    let printer_store = Arc::clone(&_printer_store);
+    let conn = device.conn;
+
+    info!("Connecting to device: {:?}", device);
+
+    match conn {
+        ConnectionType::BLE => {
+            #[cfg(feature = "ble")]
+            {
+                #[cfg(target_os = "android")]
+                {
+                    _app.escpos()
+                        .btleplug_context_spawn(async move {
+                            let mut printer_store_android = printer_store.lock().await;
+                            let adapter = FinderBLE::get_adapter()
+                                .await
+                                .map_err(|_| Error::BLEAdapterNotFound)?;
+                            let scanned_devices =
+                                FinderBLE::scan(&adapter, vec![], Duration::from_secs(time as u64))
+                                    .await
+                                    .map_err(|_| Error::BLEScan)?;
+
+                            if let Some(device_found) = scanned_devices
+                                .into_iter()
+                                .find(|d| d.address().to_string() == device.address)
+                            {
+                                info!("Connecting to device: {:?}", device_found);
+                                let device_peripheral = FinderBLE::connect(device_found)
+                                    .await
+                                    .map_err(|_| Error::BLEConnect(device.address))?;
+                                info!("Connected to device: {:?}", device_peripheral);
+                                let mut printer = PrinterESCPOSBLE::new(device_peripheral)
+                                    .await
+                                    .map_err(|_| Error::BLEPrinterInstance)?;
+                                info!("Printer instance created");
+                                printer_store_android.printer = Printer::BLE(printer);
+                                printer_store_android.connected = true;
+                            }
+
+                            Ok::<(), Error>(())
+                        })
+                        .await
+                        .map_err(|_err| Error::BLEbtleplugContextSpawn(_err.to_string()))?;
+                }
+            }
+            #[cfg(not(feature = "ble"))]
+            {
+                return Err(Error::BLEFeatureNotEnabled);
+            }
+        }
+        ConnectionType::USB => {
+            #[cfg(feature = "usb")]
+            {
+                todo!()
+            }
+            #[cfg(not(feature = "usb"))]
+            {
+                return Err(Error::USBFeatureNotEnabled);
+            }
+        }
+    }
+    Ok(())
 }
 
 #[tauri::command]
 pub(crate) async fn disconnect<R: Runtime>(
     _app: AppHandle<R>,
-    escpos: State<'_, Escpos<R>>,
+    _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
 ) -> Result<()> {
-    todo!()
+    let printer_store = Arc::clone(&_printer_store);
+    Ok(())
 }
 
 #[tauri::command]
 pub(crate) async fn print<R: Runtime>(
     _app: AppHandle<R>,
-    escpos: State<'_, Escpos<R>>,
+    _printer_store: State<'_, Arc<Mutex<PrinterStore>>>,
     data: String,
 ) -> Result<()> {
-    todo!()
+    let printer_store = Arc::clone(&_printer_store);
+    Ok(())
 }

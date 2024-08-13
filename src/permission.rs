@@ -1,7 +1,6 @@
-
 use serde::{de, Deserialize, Deserializer, Serialize, Serializer};
 
-#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Deserialize, Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct PermissionResponse {
     pub bluetooth: PermissionState,
@@ -29,8 +28,8 @@ pub enum PermissionState {
 impl std::fmt::Display for PermissionState {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::Granted => write!(f, "granted"),
-            Self::Denied => write!(f, "denied"),
+            Self::Granted => write!(f, "Granted"),
+            Self::Denied => write!(f, "Denied"),
             Self::Unknown => write!(f, "Unknown"),
         }
     }
@@ -59,4 +58,3 @@ impl<'de> Deserialize<'de> for PermissionState {
         }
     }
 }
-

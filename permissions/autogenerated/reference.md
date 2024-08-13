@@ -3,7 +3,7 @@
 Default permissions for the plugin
 
 - `allow-request-permissions`
-- `allow-permissions-ok`
+- `allow-permissions-status`
 - `allow-start`
 - `allow-check-store-state`
 - `allow-start-scan`
@@ -171,6 +171,32 @@ Enables the permissions_ok command without any pre-configured scope.
 <td>
 
 Denies the permissions_ok command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:allow-permissions-status`
+
+</td>
+<td>
+
+Enables the permissions_status command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`escpos:deny-permissions-status`
+
+</td>
+<td>
+
+Denies the permissions_status command without any pre-configured scope.
 
 </td>
 </tr>

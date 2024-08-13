@@ -379,6 +379,20 @@
           ]
         },
         {
+          "description": "allow-permissions-status -> Enables the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "allow-permissions-status"
+          ]
+        },
+        {
+          "description": "deny-permissions-status -> Denies the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "deny-permissions-status"
+          ]
+        },
+        {
           "description": "allow-request-ble-permission -> Enables the request_ble_permission command without any pre-configured scope.",
           "type": "string",
           "enum": [

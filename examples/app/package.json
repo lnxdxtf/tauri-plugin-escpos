@@ -15,11 +15,15 @@
     "@tauri-apps/plugin-shell": "^2.0.0-beta.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0-beta.0",
     "@vitejs/plugin-vue": "^4.2.3",
+    "autoprefixer": "^10.4.20",
+    "daisyui": "^4.12.10",
+    "internal-ip": "^7.0.0",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.9",
     "typescript": "^5.0.2",
     "vite": "^5.0.0",
-    "vue-tsc": "^1.8.5",
-    "@tauri-apps/cli": "^2.0.0-beta.0",
-    "internal-ip": "^7.0.0"
+    "vue-tsc": "^1.8.5"
   }
 }

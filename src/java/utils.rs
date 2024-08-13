@@ -89,7 +89,7 @@ pub(crate) fn setup_runtime() -> Result<(), SetupRuntimeError>{
         .thread_name_fn(|| {
             static ATOMIC_ID: AtomicUsize = AtomicUsize::new(0);
             let id = ATOMIC_ID.fetch_add(1, Ordering::SeqCst);
-            format!("tauri-plugin-btleplug-{}", id)
+            format!("TauriPluginEscpos-{}", id)
         })
         .on_thread_stop(|| {
             JNI_ENV.with(|f| *f.borrow_mut() = None);

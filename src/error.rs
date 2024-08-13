@@ -10,26 +10,37 @@ pub enum Error {
     #[error(transparent)]
     PluginInvoke(#[from] tauri::plugin::mobile::PluginInvokeError),
 
-    #[error("Invalid connection type")]
-    InvalidConnectionType,
-    #[error("Invalid printer type")]
-    InvalidPrinterType,
-    #[error("Invalid printer state")]
-    InvalidPrinterState,
-    /// Used when the adapter is not set
-    #[error("Adapter not set")]
-    AdapterNotSet,
+    /// Error to getting store state on the backend tauri
+    #[error("Invalid store state. Error getting the state (State of: {0}) on the backend tauri")]
+    StoreState(String),
 
-    #[error("Adapter Bluetooth not found")]
-    AdapterBluetoothNotFound,
-    #[error("Bluetooth not enabled")]
-    BluetoothNotEnabled,
+    /// Only used to differentiate the type of connection that the user wants to use. USB OR BLE
+    #[error("Invalid connection type: {0}. Only supports bluetooth and usb")]
+    ConnectionType(String),
 
-    #[error("Error getting devices ble")]
-    ErrorGetDevicesBle,
+    // BLE/Bluetooth errors
+    #[error("Bluetooth/BLE feature not enabled on Cargo.toml")]
+    BLEFeatureNotEnabled,
+    #[error("Adapter Bluetooth/BLE don't found")]
+    BLEAdapterNotFound,
+    #[error("Bluetooth/BLE don't enabled")]
+    BLENotEnabled,
+    #[error("Error getting target device{0} on store state. {1}")]
+    BLEGetDevice(String, String),
+    #[error("Error scanning for devices on Bluetooth/BLE")]
+    BLEScan,
+    #[error("Error connecting to device {0}")]
+    BLEConnect(String),
+    #[error("Error btleplug context spawn: {0}")]
+    BLEbtleplugContextSpawn(String),
 
-    #[error("Error scan devices ble")]
-    ScanError,
+    // USB errors
+    #[error("USB feature not enabled on Cargo.toml")]
+    USBFeatureNotEnabled,
+
+    // Printer errors
+    #[error("Error creating BLE printer instance")]
+    BLEPrinterInstance,
 }
 
 impl Serialize for Error {
@@ -37,7 +48,9 @@ impl Serialize for Error {
     where
         S: Serializer,
     {
-        serializer.serialize_str(self.to_string().as_ref())
+        let msg = format!("{}", self.to_string());
+        error!("{}", msg);
+        serializer.serialize_str(&msg)
     }
 }
 

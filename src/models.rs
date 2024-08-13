@@ -1,17 +1,48 @@
-pub enum PrinterType {
-    BLE(eco_print::escpos::printers::printer_ble::PrinterESCPOSBLE),
-    #[cfg(desktop)]
-    USB(eco_print::escpos::printers::printer_usb::PrinterESCPOSUSB),
-}
+use serde::{Deserialize, Serialize};
 
 #[derive(Default)]
+pub enum Printer {
+    #[cfg(feature = "ble")]
+    BLE(eco_print::escpos::printers::printer_ble::PrinterESCPOSBLE),
+    #[cfg(feature = "usb")]
+    USB(eco_print::escpos::printers::printer_usb::PrinterESCPOSUSB),
+    #[default]
+    NONE,
+}
+
+#[derive(Serialize, Deserialize, Copy, Clone, Default, Debug)]
+pub enum ConnectionType {
+    #[default]
+    BLE,
+    USB,
+}
+
+#[derive(Default, Serialize)]
 pub struct PrinterStore {
     /// Connection type, bluetooth or usb connection | This is set when the start command is executed.
-    pub connection: Option<String>,
-    /// Adapter is the bluetooth adapter to use or the usb adapter, this is set when the start command is executed
-    pub adapter: Option<eco_print::escpos::finder::ble::btleplug::platform::Adapter>,
+    /// Default is BLE connection
+    pub connection: ConnectionType,
+
+    /// Connected to the printer
+    pub connected: bool,
+
     /// When connected, the printer is set here
-    pub printer: Option<PrinterType>,
-    /// Devices with uuid/id to connect
-    pub devices: Vec<String>,
+    #[serde(skip)]
+    pub printer: Printer,
+
+    /// Devices Found | Serialized to export to the frontend
+    pub devices_ble: Vec<Device>,
+
+    /// Devices Found | Serialized to export to the frontend
+    pub devices_usb: Vec<String>,
+}
+
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
+pub struct Device {
+    pub name: String,
+    pub address: String,
+    #[cfg(feature = "ble")]
+    pub services_ble: Vec<String>,
+    /// Connection type, bluetooth or usb connection
+    pub conn: ConnectionType,
 }

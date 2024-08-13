@@ -440,6 +440,13 @@
           ]
         },
         {
+          "description": "escpos:allow-permissions-status -> Enables the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-permissions-status"
+          ]
+        },
+        {
           "description": "escpos:allow-request-ble-permission -> Enables the request_ble_permission command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -507,6 +514,13 @@
           "type": "string",
           "enum": [
             "escpos:deny-permissions-ok"
+          ]
+        },
+        {
+          "description": "escpos:deny-permissions-status -> Denies the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-permissions-status"
           ]
         },
         {
