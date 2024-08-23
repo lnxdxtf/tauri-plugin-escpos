@@ -1,11 +1,11 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub enum Printer {
     #[cfg(feature = "ble")]
-    BLE(eco_print::escpos::printers::printer_ble::PrinterESCPOSBLE),
+    BLE(eco_print::ble::ESCPOSPrinterBLE),
     #[cfg(feature = "usb")]
-    USB(eco_print::escpos::printers::printer_usb::PrinterESCPOSUSB),
+    USB(eco_print::printers::printer_usb::PrinterESCPOSUSB),
     #[default]
     NONE,
 }
@@ -17,7 +17,7 @@ pub enum ConnectionType {
     USB,
 }
 
-#[derive(Default, Serialize)]
+#[derive(Default, Serialize, Clone)]
 pub struct PrinterStore {
     /// Connection type, bluetooth or usb connection | This is set when the start command is executed.
     /// Default is BLE connection

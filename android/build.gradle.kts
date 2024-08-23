@@ -31,14 +31,14 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    
 }
 
 dependencies {
-    // Generated on crate/repository rust jni-utils-rs
-    // run on jni-utils-rs dir: cargo build --features=build-java-support --release 
-    // Copy the jni-utils-rs/target/release/java/libs/jni-utils-0.1.1-SNAPSHOT.jar to android/libs
-    implementation(files("libs/jni-utils-0.1.1-SNAPSHOT.jar"))
 
+    // Droidplug / btleplug
+    implementation(files("libs/droidplug-release.aar"))
+    
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.0")
     implementation("com.google.android.material:material:1.7.0")

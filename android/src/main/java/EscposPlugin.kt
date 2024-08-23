@@ -15,10 +15,4 @@ import app.tauri.plugin.Plugin
         Permission(strings = [Manifest.permission.BLUETOOTH_ADMIN], alias = "bluetoothAdmin"),
     ]
 )
-class EscposPlugin(private val activity: Activity): Plugin(activity) {
-    private external fun init()
-    
-    override fun load(webView: WebView) {
-        init()
-      }
-}
+class EscposPlugin(private val activity: Activity): Plugin(activity) {}

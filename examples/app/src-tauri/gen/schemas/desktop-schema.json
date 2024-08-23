@@ -405,6 +405,27 @@
           ]
         },
         {
+          "description": "escpos:allow-connect -> Enables the connect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-connect"
+          ]
+        },
+        {
+          "description": "escpos:allow-disconect -> Enables the disconect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-disconect"
+          ]
+        },
+        {
+          "description": "escpos:allow-disconnect -> Enables the disconnect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-disconnect"
+          ]
+        },
+        {
           "description": "escpos:allow-is-ble-enabled -> Enables the is_ble_enabled command without any pre-configured scope.",
           "type": "string",
           "enum": [
@@ -416,6 +437,13 @@
           "type": "string",
           "enum": [
             "escpos:allow-permissions-ok"
+          ]
+        },
+        {
+          "description": "escpos:allow-permissions-status -> Enables the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-permissions-status"
           ]
         },
         {
@@ -440,10 +468,38 @@
           ]
         },
         {
+          "description": "escpos:allow-start-scan -> Enables the start_scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:allow-start-scan"
+          ]
+        },
+        {
           "description": "escpos:deny-check-store-state -> Denies the check_store_state command without any pre-configured scope.",
           "type": "string",
           "enum": [
             "escpos:deny-check-store-state"
+          ]
+        },
+        {
+          "description": "escpos:deny-connect -> Denies the connect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-connect"
+          ]
+        },
+        {
+          "description": "escpos:deny-disconect -> Denies the disconect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-disconect"
+          ]
+        },
+        {
+          "description": "escpos:deny-disconnect -> Denies the disconnect command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-disconnect"
           ]
         },
         {
@@ -458,6 +514,13 @@
           "type": "string",
           "enum": [
             "escpos:deny-permissions-ok"
+          ]
+        },
+        {
+          "description": "escpos:deny-permissions-status -> Denies the permissions_status command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-permissions-status"
           ]
         },
         {
@@ -479,6 +542,13 @@
           "type": "string",
           "enum": [
             "escpos:deny-start"
+          ]
+        },
+        {
+          "description": "escpos:deny-start-scan -> Denies the start_scan command without any pre-configured scope.",
+          "type": "string",
+          "enum": [
+            "escpos:deny-start-scan"
           ]
         },
         {

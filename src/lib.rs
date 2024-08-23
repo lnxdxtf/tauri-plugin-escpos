@@ -23,8 +23,6 @@ use desktop::Escpos;
 mod mobile;
 #[cfg(mobile)]
 use mobile::Escpos;
-#[cfg(target_os = "android")]
-mod java;
 // ================================
 // Debug Feature ==================
 #[macro_use]
@@ -54,7 +52,6 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
             commands::request_permissions,
             commands::permissions_status,
             commands::start,
-            commands::check_store_state,
             commands::start_scan,
             commands::connect,
             commands::disconnect

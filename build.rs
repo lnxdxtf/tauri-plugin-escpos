@@ -2,7 +2,6 @@ const COMMANDS: &[&str] = &[
     "request_permissions",
     "permissions_status",
     "start",
-    "check_store_state",
     "start_scan",
     "connect",
     "disconnect",
@@ -11,6 +10,5 @@ const COMMANDS: &[&str] = &[
 fn main() {
     tauri_plugin::Builder::new(COMMANDS)
         .android_path("android")
-        // .ios_path("ios")
         .build();
 }

@@ -58,6 +58,8 @@
 
 <script lang="ts">
 import { invoke } from '@tauri-apps/api/core';
+import { listen } from "@tauri-apps/api/event";
+import { PrinterStore } from './main';
 export default {
 
 
@@ -70,35 +72,32 @@ export default {
   },
 
   methods: {
-    async check_state(): Promise<void> {
-      let state: any = await invoke('plugin:escpos|check_store_state');
-      this.state = state;
-      this.devices = state.devices_ble
-      console.log(state);
-
-    },
 
     async scan(): Promise<void> {
       this.loading = true;
-      await invoke('plugin:escpos|start_scan', { time: 5 });
-      await this.check_state();
+      await invoke('plugin:escpos|start_scan', { time: 1 });
       this.loading = false;
 
     },
 
     async connect(device: { name: string, address: string, services_ble: string[], conn: string }): Promise<void> {
       await invoke('plugin:escpos|connect', { time: 5, device: device });
-      await this.check_state();
     },
 
   },
   async mounted() {
     // If permissions not granted, the backend will request the permissions.
     await invoke('plugin:escpos|request_permissions');
-    setTimeout(async () => {
-      await invoke('plugin:escpos|start', { conn: 'BLE' });
-      await this.check_state();
-    }, 2000);
+    await invoke('plugin:escpos|start', { conn: 'BLE' });
+    // Listen for the state changes
+    listen<PrinterStore>('store_state_update', (_ev) => {
+      console.log(_ev.payload);
+      
+      this.state = _ev.payload;
+      //@ts-ignore
+      this.devices = _ev.payload.devices_ble
+    })
+    await this.scan();
   }
 }
 

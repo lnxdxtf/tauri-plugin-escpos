@@ -1,3 +1,4 @@
+use eco_print::EcoPrintError;
 use serde::{ser::Serializer, Serialize};
 
 pub type Result<T> = std::result::Result<T, Error>;
@@ -13,34 +14,10 @@ pub enum Error {
     /// Error to getting store state on the backend tauri
     #[error("Invalid store state. Error getting the state (State of: {0}) on the backend tauri")]
     StoreState(String),
-
-    /// Only used to differentiate the type of connection that the user wants to use. USB OR BLE
-    #[error("Invalid connection type: {0}. Only supports bluetooth and usb")]
-    ConnectionType(String),
-
-    // BLE/Bluetooth errors
-    #[error("Bluetooth/BLE feature not enabled on Cargo.toml")]
-    BLEFeatureNotEnabled,
-    #[error("Adapter Bluetooth/BLE don't found")]
-    BLEAdapterNotFound,
-    #[error("Bluetooth/BLE don't enabled")]
-    BLENotEnabled,
-    #[error("Error getting target device{0} on store state. {1}")]
-    BLEGetDevice(String, String),
-    #[error("Error scanning for devices on Bluetooth/BLE")]
-    BLEScan,
-    #[error("Error connecting to device {0}")]
-    BLEConnect(String),
-    #[error("Error btleplug context spawn: {0}")]
-    BLEbtleplugContextSpawn(String),
-
-    // USB errors
-    #[error("USB feature not enabled on Cargo.toml")]
-    USBFeatureNotEnabled,
-
-    // Printer errors
-    #[error("Error creating BLE printer instance")]
-    BLEPrinterInstance,
+    #[error("Error feature not enabled: {0}")]
+    FeatureNotEnabled(String),
+    #[error("Error: {0}")]
+    EcoPrint(EcoPrintError),
 }
 
 impl Serialize for Error {

@@ -5,7 +5,6 @@ Default permissions for the plugin
 - `allow-request-permissions`
 - `allow-permissions-status`
 - `allow-start`
-- `allow-check-store-state`
 - `allow-start-scan`
 - `allow-connect`
 - `allow-disconnect`
